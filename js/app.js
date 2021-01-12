@@ -22,7 +22,12 @@ HornedCreature.prototype.display = function(){
   $('main').append($templateCopy);
 }
 
-const narwahl = new HornedCreature('UniWhal', 'http://3.bp.blogspot.com/_DBYF1AdFaHw/TE-f0cDQ24I/AAAAAAAACZg/l-FdTZ6M7z8/s1600/Unicorn_and_Narwhal_by_dinglehopper.jpg', 'A unicorn and a narwhal nuzzling their horns', 'TEST', 1);
-narwahl.display(); 
-
-console.log('Test');
+$.ajax('/data/page-1.json').then(hornedList => {
+  console.log(hornedList);
+  hornedList.forEach((horned) => {
+    new HornedCreature(horned.title, horned.image_url, horned.description, horned.keyword, horned.horns);
+  });
+  creaturesArray.forEach(horned => {
+    horned.display();
+  });
+});
