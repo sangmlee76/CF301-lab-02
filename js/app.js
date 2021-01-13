@@ -21,6 +21,7 @@ HornedCreature.prototype.display = function () {
   $img.attr('class', this.keyword);
   const $p = $templateCopy.find('p');
   $p.text(this.alt);
+  $templateCopy.find('h3').text(this.keyword);
   $('main').append($templateCopy);
 };
 
@@ -33,9 +34,9 @@ $.ajax('/data/page-1.json').then(hornedList => {
     horned.display();
   });
 
-  creaturesArray.forEach((object, index, array) => {
+  creaturesArray.forEach((object) => {
     let isThere = false;
-    keywordArray.forEach((keyword2, index, array) => {
+    keywordArray.forEach((keyword2, index) => {
       let x = keywordArray[index];
       if (x === object.keyword) {
         isThere = true;
@@ -57,11 +58,12 @@ $.ajax('/data/page-1.json').then(hornedList => {
 });
 
 $('select').on('change', (event) => {
-  console.log(event);
-  let target = event.target;
+
+  let something = event.target;
+  console.log(something.value);
   $('section').hide();
-// currently only checking descriptions; need to figure out how to check class/title
-  $(`section:contains(${target.value})`).show();
+  // currently only checking descriptions; need to figure out how to check class/title
+  $(`section:contains(${something.value})`).show();
 
 
 });
