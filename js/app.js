@@ -1,7 +1,8 @@
 'use strict';
+
 const creaturesArray = [];
-const keywordArray = [];
-const horned2List = [];
+let keywordArray = [];
+let horned2List = [];
 let currentlyDisplayed = [];
 let pageNumber = 1;
 
@@ -68,25 +69,7 @@ $.ajax('/data/page-1.json').then(hornedList => {
 
     }
   });
-  $('#sort-by-horns').on('click', () => {
-    $('section').remove();
-    currentlyDisplayed.sort((first, second) => {
-      if (second.horns > first.horns) {
-        return 1;
-      } else if (first.horns > second.horns) {
-        return -1;
-      } else {
-        return 0;
-      }
 
-    });
-    currentlyDisplayed.forEach((horned, index) => {
-      const p1String = $('#second-page').html();
-      const rendered = Mustache.render(p1String, currentlyDisplayed[index]);
-      $('main').append(rendered);
-    });
-
-  });
   $('select').on('change', (event) => {
 
     let something = event.target;
@@ -120,18 +103,36 @@ $.ajax('/data/page-1.json').then(hornedList => {
 
       $.ajax('/data/page-2.JSON').then(hornedList => {
         currentlyDisplayed = [];
+        horned2List = [];
         hornedList.forEach((horned, index) => {
           horned2List.push(new HornedCreature(horned.title, horned.image_url, horned.description, horned.keyword, horned.horns));
 
           const p2String = $('#second-page').html();
           const rendered = Mustache.render(p2String, horned2List[index]);
-          currentlyDisplayed.push(horned[index]);
+          currentlyDisplayed.push(horned2List[index]);
           $('main').append(rendered);
+        });
+
+        horned2List.forEach((object) => {
+          let isThere = false;
+          keywordArray.forEach((keyword2, index) => {
+            let x = keywordArray[index];
+            if (x === object.keyword) {
+              isThere = true;
+            }
+          });
+          if (isThere === false) {
+            const $optionClone = $('option:first-child').clone();
+            $optionClone.attr('value', `${object.keyword}`);
+            $optionClone.text(`${object.keyword}`);
+            $('select').append($optionClone);
+            keywordArray.push(object.keyword);
+            console.log(object.keyword);
+          }
         });
       });
       pageNumber = 2;
-    }
-    else {
+    } else {
       currentlyDisplayed = [];
       creaturesArray.forEach(horned => {
         currentlyDisplayed.push(horned);
@@ -139,5 +140,27 @@ $.ajax('/data/page-1.json').then(hornedList => {
       });
       pageNumber = 1;
     }
+  });
+  $('#sort-by-horns').on('click', () => {
+    $.ajax('/data/page-2.JSON').then(hornedList => {
+      $('section').remove();
+      currentlyDisplayed.sort((first, second) => {
+        if (second.horns > first.horns) {
+          return 1;
+        } else if (first.horns > second.horns) {
+          return -1;
+        } else {
+          return 0;
+        }
+
+      });
+      currentlyDisplayed.forEach((horned, index) => {
+        console.log(horned);
+        const p1String = $('#second-page').html();
+        const rendered = Mustache.render(p1String, currentlyDisplayed[index]);
+        $('main').append(rendered);
+
+      });
+    });
   });
 });
