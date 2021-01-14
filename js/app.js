@@ -163,4 +163,25 @@ $.ajax('/data/page-1.json').then(hornedList => {
       });
     });
   });
+  $('#sort-by-title').on('click', () => {
+    $.ajax('/data/page-2.JSON').then(hornedList => {
+
+      $('section').remove();
+      currentlyDisplayed.sort((one, two) => {
+        if (one.name.toLowerCase() > two.name.toLowerCase()) {
+          return 1;
+        }
+        else if (one.name.toLowerCase() < two.name.toLowerCase()) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+      currentlyDisplayed.forEach((horned, index) => {
+        const p1String = $('#second-page').html();
+        const rendered = Mustache.render(p1String, currentlyDisplayed[index]);
+        $('main').append(rendered);
+      });
+    });
+  });
 });
